@@ -57,14 +57,10 @@ int interprete (sequence_t* seq, bool debug)
                 if (ret == RATE)     return RATE;     /* tombé dans l'eau ou sur un rocher */
                 break; /* à ne jamais oublier !!! */
             case 'G':
-                ret = gauche();
-                if (ret == VICTOIRE) return VICTOIRE; /* on a atteint la cible */
-                if (ret == RATE)     return RATE;     /* tombé dans l'eau ou sur un rocher */
+                gauche();
                 break;
             case 'D':
-                ret = droite();
-                if (ret == VICTOIRE) return VICTOIRE; /* on a atteint la cible */
-                if (ret == RATE)     return RATE;     /* tombé dans l'eau ou sur un rocher */
+                droite();
                 break;
             default:
                 eprintf("Caractère inconnu: '%c'\n", commande);
