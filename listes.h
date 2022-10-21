@@ -25,26 +25,23 @@
 
 extern bool silent_mode;
 
-struct cellule
-{
+struct cellule {
     int tag;
     /*
     tag = 1 : entier
     tag = 2 : character
     */
-     union 
-    {
+    union {
         int entier;
         char character;
     } command;
-    
+
     /* vous pouvez rajouter d'autres champs ici */
     struct cellule *suivant;
 };
 typedef struct cellule cellule_t;
 
-struct sequence
-{
+struct sequence {
     cellule_t *tete;
 };
 typedef struct sequence sequence_t;
@@ -55,6 +52,7 @@ cellule_t *nouvelleCellule(void);
 void detruireCellule(cellule_t *);
 
 int depilerEntier(sequence_t *seq);
+
 char depilerChar(sequence_t *seq);
 
 void empiler(sequence_t *l, char c);
