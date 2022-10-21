@@ -4,10 +4,10 @@
 #include <stdbool.h>
 
 /*
- * Pour réaliser des tests de performance, désactiver tous les 
+ * Pour réaliser des tests de performance, désactiver tous les
  * affichages.
- * Pour cela, le plus simple est de redefinir les fonctions principales 
- * en decommentant les 3 lignes suivantes et en commentant l'ancienne 
+ * Pour cela, le plus simple est de redefinir les fonctions principales
+ * en decommentant les 3 lignes suivantes et en commentant l'ancienne
  * definition de 'eprintf' juste dessous.
  */
 
@@ -19,38 +19,52 @@
 
 #else
 
-#define eprintf(...) fprintf (stderr, __VA_ARGS__)
+#define eprintf(...) fprintf(stderr, __VA_ARGS__)
 
 #endif
 
 extern bool silent_mode;
 
-
-
-
-struct cellule {
-    char   command;
+struct cellule
+{
+    int tag;
+    /*
+    tag = 1 : entier
+    tag = 2 : character
+    */
+     union 
+    {
+        int entier;
+        char character;
+    } command;
+    
     /* vous pouvez rajouter d'autres champs ici */
     struct cellule *suivant;
 };
 typedef struct cellule cellule_t;
 
-struct sequence {
+struct sequence
+{
     cellule_t *tete;
 };
 typedef struct sequence sequence_t;
 
-cellule_t* nouvelleCellule (void);
+cellule_t *nouvelleCellule(void);
 
-void detruireCellule (cellule_t*);
 
-void conversion (char *texte, sequence_t *seq);
+void detruireCellule(cellule_t *);
+
+int depilerEntier(sequence_t *seq);
+char depilerChar(sequence_t *seq);
+
+void empiler(sequence_t *l, char c);
+
+int getTag(char c);
+
+void conversion(char *texte, sequence_t *seq);
 
 cellule_t *ajouter_queue_mod(sequence_t *l, cellule_t *queue, char u);
 
-void ajouter_tete(sequence_t *l, int u);
-
-void afficher (sequence_t* seq);
-
+void afficher(sequence_t *seq);
 
 #endif

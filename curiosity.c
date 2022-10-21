@@ -195,6 +195,7 @@ void droite() {
 }
 
 
+
 void gauche() {
     if (dX==1) {
         dX=0;
@@ -267,3 +268,10 @@ void pose (int arg) {
     }
 }
 
+void poserMarque(){
+    mars.marques[cY][cX]=true;
+}
+
+void retirerMarque(){
+    mars.marques[cY][cX]=false;
+}

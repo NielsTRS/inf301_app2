@@ -44,5 +44,6 @@ void droite(void);
 void gauche(void);
 int mesure(int);
 void pose(int);
-
+void poserMarque();
+void retirerMarque();
 #endif
