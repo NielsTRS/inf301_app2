@@ -55,20 +55,20 @@ int interprete(sequence_t *seq, bool debug) {
             commande = c->command.caractere;
             printf("instruction %d : %c", i, c->command.caractere);
             switch (commande) {
-                case 'A':
+                case 'A': // avancer
                     ret = avance();
                     if (ret == VICTOIRE)
                         return VICTOIRE; /* on a atteint la cible */
                     if (ret == RATE)
                         return RATE; /* tombé dans l'eau ou sur un rocher */
                     break;           /* à ne jamais oublier !!! */
-                case 'G':
+                case 'G': // gauche
                     gauche();
                     break;
-                case 'D':
+                case 'D': // droite
                     droite();
                     break;
-                case 'P':
+                case 'P': // pose
                     n = depilerEntier(pile);
                     if (n == -1) {
                         printf("Erreur: la pile est vide dans interprération");
@@ -80,7 +80,7 @@ int interprete(sequence_t *seq, bool debug) {
                         poserMarque();
                     }
                     break;
-                case 'M':
+                case 'M': // mesure
                     n = depilerEntier(pile);
                     if (n == -1) {
                         printf("Erreur: la pile est vide dans interprération");
@@ -89,19 +89,19 @@ int interprete(sequence_t *seq, bool debug) {
                         empiler(pile, n + '0');
                     }
                     break;
-                case '?':
+                case '?': // condition
                     *pileF = *depilerListe(pile);
                     *pileV = *depilerListe(pile);
                     n = depilerEntier(pile);
                     if (n == -1) {
                         printf("Erreur: la pile est vide dans interprération");
-                    } else if (n == 0) {
+                    } else if (n == 0) { // execute F
                         ret = interprete(pileF, debug);
                         if (ret == VICTOIRE)
                             return VICTOIRE;
                         if (ret == RATE)
                             return RATE;
-                    } else {
+                    } else { // execute V
                         ret = interprete(pileV, debug);
                         if (ret == VICTOIRE)
                             return VICTOIRE; /* on a atteint la cible */
@@ -112,7 +112,7 @@ int interprete(sequence_t *seq, bool debug) {
                 default:
                     eprintf("Caractère inconnu: '%c'\n", commande);
             }
-        } else if (c->tag == 3) {
+        } else if (c->tag == 3) { // c'est une liste
             empilerListe(pile, c->command.liste);
         } else {
             printf("Erreur: tag inconnu");
