@@ -25,7 +25,7 @@
 
 extern bool silent_mode;
 
-union CommandeValeur{
+union CommandeValeur {
     int entier;
     char caractere;
     struct sequence *liste;
