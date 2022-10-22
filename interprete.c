@@ -17,21 +17,24 @@
  *
  */
 
-void stop(void) {
+void stop(void)
+{
     char enter = '\0';
     printf("Appuyer sur entrée pour continuer...\n");
-    while (enter != '\r' && enter != '\n') {
+    while (enter != '\r' && enter != '\n')
+    {
         enter = getchar();
     }
 }
 
-int interprete(sequence_t *seq, bool debug) {
+int interprete(sequence_t *seq, bool debug)
+{
     // Version temporaire a remplacer par une lecture des commandes dans la
     // liste chainee et leur interpretation.
 
     char commande;
     cellule_t *c;
-
+    int i = 0;
     debug = true; /* À enlever par la suite et utiliser "-d" sur la ligne de commandes */
 
     printf("Programme:");
@@ -43,53 +46,102 @@ int interprete(sequence_t *seq, bool debug) {
     int ret; // utilisée pour les valeurs de retour
     sequence_t *pile = malloc(sizeof(sequence_t));
     pile->tete = NULL;
-    int n; //pour stocker un argument (le dernier élément de pile par ex)
-    while (c->suivant != NULL) {
-        if (c->tag == 1) { //c'est un entier donc on l'empile
+    int n;                                          // pour stocker un argument (le dernier élément de pile par ex)
+    sequence_t *pileV = malloc(sizeof(sequence_t)); // pour stocker un bloc de commandes
+    sequence_t *pileF = malloc(sizeof(sequence_t)); // pour stocker un bloc de commandes
+    while (c != NULL)
+    {
+
+        if (c->tag == 1)
+        { // c'est un entier donc on l'empile
             empiler(pile, c->command.entier + '0');
-        } else if (c->tag == 2) //c'est un caractère donc une commande
+        }
+        else if (c->tag == 2) // c'est un caractère donc une commande
         {
             commande = c->command.caractere;
-            printf("%c", c->command.caractere);
-            switch (commande) {
-                case 'A':
-                    ret = avance();
+            printf("instruction %d : %c", i, c->command.caractere);
+            switch (commande)
+            {
+            case 'A':
+                ret = avance();
+                if (ret == VICTOIRE)
+                    return VICTOIRE; /* on a atteint la cible */
+                if (ret == RATE)
+                    return RATE; /* tombé dans l'eau ou sur un rocher */
+                break;           /* à ne jamais oublier !!! */
+            case 'G':
+                gauche();
+                break;
+            case 'D':
+                droite();
+                break;
+            case 'P':
+                n = depilerEntier(pile);
+                if (n == -1)
+                {
+                    printf("Erreur: la pile est vide dans interprération");
+                }
+                else if (n == 0)
+                {
+                    pose(n);
+                    retirerMarque();
+                }
+                else
+                {
+                    pose(n);
+                    poserMarque();
+                }
+                break;
+            case 'M':
+                n = depilerEntier(pile);
+                if (n == -1)
+                {
+                    printf("Erreur: la pile est vide dans interprération");
+                }
+                else
+                {
+                    n = mesure(n);
+                    empiler(pile, n + '0');
+                }
+                break;
+            case '?':
+                *pileF = *depilerListe(pile);
+                *pileV = *depilerListe(pile);
+                n = depilerEntier(pile);
+                if (n == -1)
+                {
+                    printf("Erreur: la pile est vide dans interprération");
+                }
+                else if (n == 0)
+                {
+                    ret = interprete(pileF, debug);
+                    if (ret == VICTOIRE)
+                        return VICTOIRE;
+                    if (ret == RATE)
+                        return RATE;
+                }
+                else
+                {
+                    ret = interprete(pileV, debug);
                     if (ret == VICTOIRE)
                         return VICTOIRE; /* on a atteint la cible */
                     if (ret == RATE)
-                        return RATE; /* tombé dans l'eau ou sur un rocher */
-                    break;           /* à ne jamais oublier !!! */
-                case 'G':
-                    gauche();
-                    break;
-                case 'D':
-                    droite();
-                    break;
-                case 'P':
-                    n = depilerEntier(pile);
-                    if (n == -1) {
-                        printf("Erreur: la pile est vide dans interprération");
-                    } else if (n == 0) {
-                        pose(n);
-                        retirerMarque();
-                    } else {
-                        pose(n);
-                        poserMarque();
-                    }
-                    break;
-                case 'M':
-                    n = depilerEntier(pile);
-                    if (n == -1) {
-                        printf("Erreur: la pile est vide dans interprération");
-                    } else {
-                        n = mesure(n);
-                        empiler(pile, n + '0');
-                    }
-                    break;
-                default:
-                    eprintf("Caractère inconnu: '%c'\n", commande);
+                        return RATE;
+                }
+                break;
+            default:
+                eprintf("Caractère inconnu: '%c'\n", commande);
             }
         }
+        else if (c->tag == 3)
+        {
+            empilerListe(pile, c->command.liste);
+        }
+        else
+        {
+            printf("Erreur: tag inconnu");
+        }
+        afficher(pile);
 
         c = c->suivant;
 
@@ -98,6 +150,7 @@ int interprete(sequence_t *seq, bool debug) {
         printf("Programme:");
         afficher(seq);
         printf("\n");
+        i = i + 1;
         if (debug)
             stop();
     }

@@ -28,6 +28,7 @@ extern bool silent_mode;
 union CommandeValeur{
     int entier;
     char caractere;
+    struct sequence *liste;
 };
 
 struct cellule {
@@ -35,6 +36,7 @@ struct cellule {
     /*
     tag = 1 : entier
     tag = 2 : character
+    tag = 3 : liste
     */
     union CommandeValeur command;
 
@@ -57,7 +59,11 @@ int depilerEntier(sequence_t *seq);
 
 char depilerChar(sequence_t *seq);
 
+sequence_t *depilerListe(sequence_t *seq);
+
 void empiler(sequence_t *l, char c);
+
+void empilerListe(sequence_t *l, sequence_t *aAjouter);
 
 int getTag(char c);
 
