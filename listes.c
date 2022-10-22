@@ -97,13 +97,14 @@ void empiler(sequence_t *l, char c)
 
 void conversion(char *texte, sequence_t *seq)
 {
+    printf("Conversion de %s en liste chainee", texte);
     int l = strlen(texte);
+    seq->tete = NULL;
     if (l >= 0)
     {
-        empiler(seq, texte[0]);
-        cellule_t *cell;
+        cellule_t *cell = NULL;
         cell = seq->tete;
-        int i = 1;
+        int i = 0;
         while (i < l)
         {
             if (texte[i] != ' ')
@@ -151,7 +152,12 @@ cellule_t *ajouter_queue_mod(sequence_t *l, cellule_t *queue, char u)
     }
     c->tag = tag;
     c->suivant = NULL;
-    queue->suivant = c;
+    if(queue != NULL){
+        queue->suivant = c;
+    }
+    else{
+        l->tete = c;
+    }
     return c;
 }
 
