@@ -31,7 +31,6 @@ int interprete(sequence_t *seq, bool debug) {
 
     char commande;
     cellule_t *c;
-    //sequence_t *pile; // on initialise nos piles (pour stocker le résultat par exemple)
 
     debug = true; /* À enlever par la suite et utiliser "-d" sur la ligne de commandes */
 
@@ -42,16 +41,16 @@ int interprete(sequence_t *seq, bool debug) {
         stop();
     c = seq->tete;
     int ret; // utilisée pour les valeurs de retour
-    sequence_t pile;
+    sequence_t *pile = malloc(sizeof(sequence_t));
+    pile->tete = NULL;
     int n; //pour stocker un argument (le dernier élément de pile par ex)
-    char tempC; //char temporaire pour empiler un entier
     while (c->suivant != NULL) {
         if (c->tag == 1) { //c'est un entier donc on l'empile
-            empiler(&pile, c->command.entier);
+            empiler(pile, c->command.entier + '0');
         } else if (c->tag == 2) //c'est un caractère donc une commande
         {
-            commande = c->command.character;
-            printf("%c", c->command.character);
+            commande = c->command.caractere;
+            printf("%c", c->command.caractere);
             switch (commande) {
                 case 'A':
                     ret = avance();
@@ -67,23 +66,24 @@ int interprete(sequence_t *seq, bool debug) {
                     droite();
                     break;
                 case 'P':
-                    n = depilerEntier(&pile);
+                    n = depilerEntier(pile);
                     if (n == -1) {
                         printf("Erreur: la pile est vide dans interprération");
                     } else if (n == 0) {
+                        pose(n);
                         retirerMarque();
                     } else {
+                        pose(n);
                         poserMarque();
                     }
                     break;
                 case 'M':
-                    n = depilerEntier(&pile);
+                    n = depilerEntier(pile);
                     if (n == -1) {
                         printf("Erreur: la pile est vide dans interprération");
                     } else {
                         n = mesure(n);
-                        tempC = n + '0';
-                        empiler(&pile, tempC);
+                        empiler(pile, n + '0');
                     }
                     break;
                 default:

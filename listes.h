@@ -25,16 +25,18 @@
 
 extern bool silent_mode;
 
+union CommandeValeur{
+    int entier;
+    char caractere;
+};
+
 struct cellule {
     int tag;
     /*
     tag = 1 : entier
     tag = 2 : character
     */
-    union {
-        int entier;
-        char character;
-    } command;
+    union CommandeValeur command;
 
     /* vous pouvez rajouter d'autres champs ici */
     struct cellule *suivant;
