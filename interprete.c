@@ -47,10 +47,10 @@ int interprete(sequence_t *seq, bool debug)
     int ret = -1; // utilisée pour les valeurs de retour
     sequence_t *pile = malloc(sizeof(sequence_t));
     pile->tete = NULL;
-    int n;                                          // pour stocker un argument (le dernier élément de pile par ex)
-    sequence_t *pileV = malloc(sizeof(sequence_t)); // pour stocker un bloc de commandes
-    sequence_t *pileF = malloc(sizeof(sequence_t)); // pour stocker un bloc de commandes
-    sequence_t *bloc;                               // pour stocker le bloc de commande en cours de construction
+    int n;                    // pour stocker un argument (le dernier élément de pile par ex)
+    sequence_t *pileV = NULL; // pour stocker un bloc de commandes
+    sequence_t *pileF = NULL; // pour stocker un bloc de commandes
+    sequence_t *bloc;         // pour stocker le bloc de commande en cours de construction
     int parenthesesOuvertes = 0;
 
     while (c != NULL)
@@ -149,14 +149,16 @@ int interprete(sequence_t *seq, bool debug)
                     pileV = depilerListe(pile);
                     assert(pileV);
                     ret = interprete(pileV, debug);
+                    detruireListe(pileV);
                     if (ret == VICTOIRE)
                     {
-                        
-                    return VICTOIRE; /* on a atteint la cible */
+                        detruireListe(pile);
+                        return VICTOIRE; /* on a atteint la cible */
                     }
-                    if (ret == RATE){
-                       
-                    return RATE;
+                    if (ret == RATE)
+                    {
+                        detruireListe(pile);
+                        return RATE;
                     }
 
                     break;
@@ -173,8 +175,9 @@ int interprete(sequence_t *seq, bool debug)
                     }
                     break;
                 case '?': // condition
-                    *pileF = *depilerListe(pile);
-                    *pileV = *depilerListe(pile);
+
+                    pileF = depilerListe(pile);
+                    pileV = depilerListe(pile);
                     n = depilerEntier(pile);
                     if (n == -1)
                     {
@@ -182,29 +185,31 @@ int interprete(sequence_t *seq, bool debug)
                     }
                     else if (n == 0)
                     { // execute F
-                            ret = interprete(pileF, debug);
-
+                        ret = interprete(pileF, debug);
+                        detruireListe(pileF);
                         if (ret == VICTOIRE)
                         {
-                
+                            detruireListe(pile);
                             return VICTOIRE;
                         }
                         if (ret == RATE)
                         {
-                   
+                            detruireListe(pile);
                             return RATE;
                         }
                     }
                     else
                     { // execute V
-                            ret = interprete(pileV, debug);
+                        ret = interprete(pileV, debug);
+                        detruireListe(pileV);
                         if (ret == VICTOIRE)
                         {
-        
+                            detruireListe(pile);
                             return VICTOIRE; /* on a atteint la cible */
                         }
                         if (ret == RATE)
                         {
+                            detruireListe(pile);
                             return RATE;
                         }
                     }
@@ -239,7 +244,5 @@ int interprete(sequence_t *seq, bool debug)
     /* Si on sort de la boucle sans arriver sur la cible,
      * c'est raté :-( */
 
-
     return CIBLERATEE;
 }
-
