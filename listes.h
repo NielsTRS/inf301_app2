@@ -53,7 +53,9 @@ typedef struct sequence sequence_t;
 cellule_t *nouvelleCellule(void);
 
 
-void detruireCellule(cellule_t *);
+void detruireCellule(cellule_t *cel);
+
+void detruireListe(sequence_t *l);
 
 int depilerEntier(sequence_t *seq);
 
@@ -70,6 +72,8 @@ int getTag(char c);
 void conversion(char *texte, sequence_t *seq);
 
 cellule_t *ajouter_queue_mod(sequence_t *l, cellule_t *queue, char u);
+
+void ajouter_queue(sequence_t *l, char u);
 
 void afficher(sequence_t *seq);
 

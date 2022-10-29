@@ -10,6 +10,7 @@
 #include "listes.h"
 #include "curiosity.h"
 
+
 /*
  *  Auteur(s) :
  *  Date :
@@ -17,44 +18,98 @@
  *
  */
 
-void stop(void) {
+void stop(void)
+{
     char enter = '\0';
     printf("Appuyer sur entrée pour continuer...\n");
-    while (enter != '\r' && enter != '\n') {
+    while (enter != '\r' && enter != '\n')
+    {
         enter = getchar();
     }
 }
 
-int interprete(sequence_t *seq, bool debug) {
-    // Version temporaire a remplacer par une lecture des commandes dans la
-    // liste chainee et leur interpretation.
-
+int interprete(sequence_t *seq, bool debug)
+{
     char commande;
     cellule_t *c;
     int i = 0;
     debug = true; /* À enlever par la suite et utiliser "-d" sur la ligne de commandes */
 
-    printf("Programme:");
-    afficher(seq);
-    printf("\n");
+    if (!silent_mode)
+    {
+        printf("Programme:");
+        afficher(seq);
+        printf("\n");
+    }
     if (debug)
         stop();
     c = seq->tete;
-    int ret; // utilisée pour les valeurs de retour
+    int ret = -1; // utilisée pour les valeurs de retour
     sequence_t *pile = malloc(sizeof(sequence_t));
     pile->tete = NULL;
     int n;                                          // pour stocker un argument (le dernier élément de pile par ex)
     sequence_t *pileV = malloc(sizeof(sequence_t)); // pour stocker un bloc de commandes
     sequence_t *pileF = malloc(sizeof(sequence_t)); // pour stocker un bloc de commandes
-    while (c != NULL) {
+    sequence_t *bloc;                               // pour stocker le bloc de commande en cours de construction
+    int parenthesesOuvertes = 0;
 
-        if (c->tag == 1) { // c'est un entier donc on l'empile
-            empiler(pile, c->command.entier + '0');
-        } else if (c->tag == 2) // c'est un caractère donc une commande
+    while (c != NULL)
+    {
+        if (parenthesesOuvertes > 0)
         {
-            commande = c->command.caractere;
-            printf("instruction %d : %c", i, c->command.caractere);
-            switch (commande) {
+            printf("Tag : %d %c\n", c->tag, c->command.caractere);
+            switch (c->tag)
+            {
+            case 1:
+                ajouter_queue(bloc, c->command.entier + '0');
+                printf("tag entier");
+                break;
+            case 2:
+                if (c->command.caractere == '}')
+                {
+                    parenthesesOuvertes--;
+                    if (parenthesesOuvertes == 0)
+                    {
+                        empilerListe(pile, bloc);
+                        printf("Liste à ajouter :");
+                        afficher(bloc);
+                        bloc = NULL;
+                    }
+                    else
+                    {
+
+                        ajouter_queue(bloc, c->command.caractere);
+                    }
+                }
+                else
+                {
+                    printf("Liste à ajouter :");
+                    afficher(bloc);
+                    ajouter_queue(bloc, c->command.caractere);
+                    if (c->command.caractere == '{')
+                    {
+                        parenthesesOuvertes++;
+                    }
+                }
+                break;
+            default:
+                printf("tag inconnu interprete parenthese ouverte");
+                break;
+            }
+        }
+        else
+        {
+
+            if (c->tag == 1)
+            { // c'est un entier donc on l'empile
+                empiler(pile, c->command.entier + '0');
+            }
+            else if (c->tag == 2) // c'est un caractère donc une commande
+            {
+                commande = c->command.caractere;
+                printf("instruction %d : %c", i, c->command.caractere);
+                switch (commande)
+                {
                 case 'A': // avancer
                     ret = avance();
                     if (ret == VICTOIRE)
@@ -62,7 +117,7 @@ int interprete(sequence_t *seq, bool debug) {
                     if (ret == RATE)
                         return RATE; /* tombé dans l'eau ou sur un rocher */
                     break;           /* à ne jamais oublier !!! */
-                case 'G': // gauche
+                case 'G':            // gauche
                     gauche();
                     break;
                 case 'D': // droite
@@ -70,21 +125,49 @@ int interprete(sequence_t *seq, bool debug) {
                     break;
                 case 'P': // pose
                     n = depilerEntier(pile);
-                    if (n == -1) {
+                    if (n == -1)
+                    {
                         printf("Erreur: la pile est vide dans interprération");
-                    } else if (n == 0) {
+                    }
+                    else if (n == 0)
+                    {
                         pose(n);
                         retirerMarque();
-                    } else {
+                    }
+                    else
+                    {
                         pose(n);
                         poserMarque();
                     }
                     break;
+                case '{':
+                    bloc = malloc(sizeof(sequence_t));
+                    bloc->tete = NULL;
+                    parenthesesOuvertes++;
+                    break;
+                case '!':
+                    pileV = depilerListe(pile);
+                    assert(pileV);
+                    ret = interprete(pileV, debug);
+                    if (ret == VICTOIRE)
+                    {
+                        
+                    return VICTOIRE; /* on a atteint la cible */
+                    }
+                    if (ret == RATE){
+                       
+                    return RATE;
+                    }
+
+                    break;
                 case 'M': // mesure
                     n = depilerEntier(pile);
-                    if (n == -1) {
+                    if (n == -1)
+                    {
                         printf("Erreur: la pile est vide dans interprération");
-                    } else {
+                    }
+                    else
+                    {
                         n = mesure(n);
                         empiler(pile, n + '0');
                     }
@@ -93,29 +176,51 @@ int interprete(sequence_t *seq, bool debug) {
                     *pileF = *depilerListe(pile);
                     *pileV = *depilerListe(pile);
                     n = depilerEntier(pile);
-                    if (n == -1) {
+                    if (n == -1)
+                    {
                         printf("Erreur: la pile est vide dans interprération");
-                    } else if (n == 0) { // execute F
-                        ret = interprete(pileF, debug);
+                    }
+                    else if (n == 0)
+                    { // execute F
+                            ret = interprete(pileF, debug);
+
                         if (ret == VICTOIRE)
+                        {
+                
                             return VICTOIRE;
+                        }
                         if (ret == RATE)
+                        {
+                   
                             return RATE;
-                    } else { // execute V
-                        ret = interprete(pileV, debug);
+                        }
+                    }
+                    else
+                    { // execute V
+                            ret = interprete(pileV, debug);
                         if (ret == VICTOIRE)
+                        {
+        
                             return VICTOIRE; /* on a atteint la cible */
+                        }
                         if (ret == RATE)
+                        {
                             return RATE;
+                        }
                     }
                     break;
                 default:
                     eprintf("Caractère inconnu: '%c'\n", commande);
+                }
             }
-        } else if (c->tag == 3) { // c'est une liste
-            empilerListe(pile, c->command.liste);
-        } else {
-            printf("Erreur: tag inconnu");
+            else if (c->tag == 3)
+            { // c'est une liste
+                empilerListe(pile, c->command.liste);
+            }
+            else
+            {
+                printf("Erreur: tag inconnu");
+            }
         }
         afficher(pile);
 
@@ -134,5 +239,7 @@ int interprete(sequence_t *seq, bool debug) {
     /* Si on sort de la boucle sans arriver sur la cible,
      * c'est raté :-( */
 
+
     return CIBLERATEE;
 }
+

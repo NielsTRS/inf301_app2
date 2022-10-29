@@ -20,25 +20,46 @@
 
 bool silent_mode = false;
 
-cellule_t *nouvelleCellule(void) {
+cellule_t *nouvelleCellule(void)
+{
     cellule_t *c = malloc(sizeof(cellule_t));
     c->suivant = NULL;
     return c;
 }
 
-void detruireCellule(cellule_t *cel) {
+void detruireCellule(cellule_t *cel)
+{
     free(cel);
 }
 
-int depilerEntier(sequence_t *seq) {
+void detruireListe(sequence_t *l){
+    cellule_t *c = l->tete;
+    cellule_t *tmp;
+    while (c != NULL){
+        tmp = c;
+        c = c->suivant;
+        if(tmp->tag == 3){
+            detruireListe(tmp->command.liste);
+        }
+        detruireCellule(tmp);
+    }
+    free(l);
+}
+
+int depilerEntier(sequence_t *seq)
+{
     int entier = -1;
     cellule_t *c;
-    if (seq->tete != NULL) {
+    if (seq->tete != NULL)
+    {
         c = seq->tete;
         entier = c->command.entier;
-        if (c->suivant != NULL) {
+        if (c->suivant != NULL)
+        {
             seq->tete = c->suivant;
-        } else {
+        }
+        else
+        {
             seq->tete = NULL;
         }
         detruireCellule(c);
@@ -47,15 +68,20 @@ int depilerEntier(sequence_t *seq) {
     return entier;
 }
 
-char depilerChar(sequence_t *seq) {
+char depilerChar(sequence_t *seq)
+{
     char caractere = '\0';
     cellule_t *c;
-    if (seq->tete != NULL) {
+    if (seq->tete != NULL)
+    {
         c = seq->tete;
         caractere = c->command.caractere;
-        if (c->suivant != NULL) {
+        if (c->suivant != NULL)
+        {
             seq->tete = c->suivant;
-        } else {
+        }
+        else
+        {
             seq->tete = NULL;
         }
 
@@ -65,15 +91,20 @@ char depilerChar(sequence_t *seq) {
     return caractere;
 }
 
-sequence_t *depilerListe(sequence_t *seq) {
+sequence_t *depilerListe(sequence_t *seq)
+{
     sequence_t *retour = NULL;
     cellule_t *c;
-    if (seq->tete != NULL) {
+    if (seq->tete != NULL)
+    {
         c = seq->tete;
         retour = c->command.liste;
-        if (c->suivant != NULL) {
+        if (c->suivant != NULL)
+        {
             seq->tete = c->suivant;
-        } else {
+        }
+        else
+        {
             seq->tete = NULL;
         }
 
@@ -83,124 +114,162 @@ sequence_t *depilerListe(sequence_t *seq) {
     return retour;
 }
 
-void empiler(sequence_t *l, char c) {
+void empiler(sequence_t *l, char c)
+{
     cellule_t *cell = nouvelleCellule();
     int tag = getTag(c);
-    switch (tag) {
-        case 1:
-            cell->command.entier = c - '0';
-            break;
-        case 2:
-            cell->command.caractere = c;
-            break;
-        default:
-            break;
+    switch (tag)
+    {
+    case 1:
+        cell->command.entier = c - '0';
+        break;
+    case 2:
+        cell->command.caractere = c;
+        break;
+    default:
+        break;
     }
     cell->tag = tag;
-    if (l->tete != NULL) {
+    if (l->tete != NULL)
+    {
         cell->suivant = l->tete;
     }
     l->tete = cell;
 }
 
-void empilerListe(sequence_t *l, sequence_t *aAjouter) {
+void empilerListe(sequence_t *l, sequence_t *aAjouter)
+{
     cellule_t *cell = nouvelleCellule();
     cell->tag = 3;
     cell->command.liste = aAjouter;
-    if (l->tete != NULL) {
+    if (l->tete != NULL)
+    {
         cell->suivant = l->tete;
     }
     l->tete = cell;
 }
 
-void conversion(char *texte, sequence_t *seq) {
-    int l = strlen(texte) - 1;
+void conversion(char *texte, sequence_t *seq)
+{
     seq->tete = NULL;
-    if (l >= 0) {
-        cellule_t *cell = NULL;
-        cell = seq->tete;
-        int i = 0;
-        while (i < l) {
-            if (texte[i] == '{') {
-                cellule_t *newCell = nouvelleCellule();
-                newCell->tag = 3;
-                sequence_t *newSeq = malloc(sizeof(sequence_t));
-                newSeq->tete = NULL;
-                i++;
-                cellule_t *firstCell = NULL;
-                while (texte[i] != '}') {
-                    firstCell = ajouter_queue_mod(newSeq, firstCell, texte[i]);
-                    i++;
-                }
-                newCell->command.liste = newSeq;
-                cell->suivant = newCell;
-                cell = newCell;
-            } else if (texte[i] != ' ') {
-                cell = ajouter_queue_mod(seq, cell, texte[i]);
-            }
-            i = i + 1;
-        }
-    } else {
-        printf("erreur tentative création liste vide");
+    int i = 0;
+    cellule_t *cell = NULL;
+    cell = seq->tete;
+    while (texte[i] != '\0')
+    {
+        if (texte[i] != ' ' && texte[i] != '\n')
+            cell = ajouter_queue_mod(seq, cell, texte[i]);
+        i++;
     }
 }
 
 // nos fonctions intermédiaires
 
-int getTag(char c) {
-    if (isdigit(c)) {
+int getTag(char c)
+{
+    if (isdigit(c))
+    {
         return 1;
-    } else {
+    }
+    else
+    {
         return 2;
     }
 }
 
-cellule_t *ajouter_queue_mod(sequence_t *l, cellule_t *queue, char u) {
+cellule_t *ajouter_queue_mod(sequence_t *l, cellule_t *queue, char u)
+{
     cellule_t *c = nouvelleCellule();
     int tag = getTag(u);
-    switch (tag) {
-        case 1:
-            c->command.entier = u - '0';
-            break;
-        case 2:
-            c->command.caractere = u;
-            break;
-        default:
-            printf("ERREUR TAG INCONNU DANS L'AJOUT QUEUE MOD");
-            break;
+    switch (tag)
+    {
+    case 1:
+        c->command.entier = u - '0';
+        break;
+    case 2:
+        c->command.caractere = u;
+        break;
+    default:
+        printf("ERREUR TAG INCONNU DANS L'AJOUT QUEUE MOD");
+        break;
     }
     c->tag = tag;
     c->suivant = NULL;
-    if (queue != NULL) {
+    if (queue != NULL)
+    {
         queue->suivant = c;
-    } else {
+    }
+    else
+    {
         l->tete = c;
     }
     return c;
 }
 
-void afficher(sequence_t *seq) {
+void ajouter_queue(sequence_t *l, char u)
+{
+    cellule_t *new = nouvelleCellule();
+
+    int tag = getTag(u);
+    switch (tag)
+    {
+    case 1:
+        new->command.entier = u - '0';
+        break;
+    case 2:
+        new->command.caractere = u;
+        break;
+    default:
+        printf("ERREUR TAG INCONNU DANS L'AJOUT QUEUE");
+        break;
+    }
+    new->tag = tag;
+    cellule_t *c = l->tete;
+    if (c != NULL)
+    {
+        while (c->suivant != NULL)
+        {
+            c = c->suivant;
+        }
+    }
+    new->suivant = NULL;
+    if (c != NULL)
+    {
+        c->suivant = new;
+    }
+    else
+    {
+        l->tete = new;
+    }
+
+
+}
+
+void afficher(sequence_t *seq)
+{
     assert(seq); /* Le pointeur doit être valide */
     cellule_t *c;
     c = seq->tete;
-    while (c != NULL) {
-        switch (c->tag) {
-            case 1:
-                printf("%d", c->command.entier);
-                break;
-            case 2:
-                printf("%c", c->command.caractere);
-                break;
-            case 3:
-                printf("{");
-                afficher(c->command.liste);
-                printf("}");
-                break;
-            default:
-                printf("ERREUR TAG INCONNU DANS L'AFFICHAGE");
-                break;
+    while (c != NULL)
+    {
+        switch (c->tag)
+        {
+        case 1:
+            printf("%d", c->command.entier);
+            break;
+        case 2:
+            printf("%c", c->command.caractere);
+            break;
+        case 3:
+            printf("{");
+            afficher(c->command.liste);
+            printf("}");
+            break;
+        default:
+            printf("ERREUR TAG INCONNU DANS L'AFFICHAGE");
+            break;
         }
         c = c->suivant;
     }
-    //printf("\n");
+    // printf("\n");
 }
