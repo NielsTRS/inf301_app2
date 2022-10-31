@@ -75,6 +75,8 @@ cellule_t *ajouter_queue_mod(sequence_t *l, cellule_t *queue, char u);
 
 void ajouter_queue(sequence_t *l, char u);
 
+void inversion(sequence_t *seq);
+
 void afficher(sequence_t *seq);
 
 #endif

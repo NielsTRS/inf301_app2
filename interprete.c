@@ -134,7 +134,6 @@ int interprete(sequence_t *seq, bool debug) {
                             detruireListe(pile);
                             return RATE;
                         }
-
                         break;
                     case 'M': // mesure
                         n = depilerEntier(pile);
@@ -144,6 +143,9 @@ int interprete(sequence_t *seq, bool debug) {
                             n = mesure(n);
                             empiler(pile, n + '0');
                         }
+                        break;
+                    case 'Z':
+                        inversion(pile);
                         break;
                     case '?': // condition
 

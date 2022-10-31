@@ -201,8 +201,51 @@ void ajouter_queue(sequence_t *l, char u) {
     } else {
         l->tete = new;
     }
+}
 
+void inversion(sequence_t *seq) {
+    if (seq->tete != NULL) {
+        int n;
+        cellule_t *c_suiv = seq->tete;
+        for (n = 1; c_suiv->suivant != NULL; n++) {
+            c_suiv = c_suiv->suivant;
+        }
 
+        int tag[n];
+        int commande_entier[n];
+        char commande_caractere[n];
+        c_suiv = seq->tete;
+        for (int i = 0; i < n; i++) {
+            tag[i] = c_suiv->tag;
+            switch (tag[i]) {
+                case 1:
+                    commande_entier[i] = c_suiv->command.entier;
+                    break;
+                case 2:
+                    commande_caractere[i] = c_suiv->command.caractere;
+                    break;
+                default:
+                    break;
+            }
+            c_suiv = c_suiv->suivant;
+        }
+
+        c_suiv = seq->tete;
+        for (int i = 1; i <= n; i++) {
+            c_suiv->tag = tag[n - i];
+            switch (tag[n - i]) {
+                case 1:
+                    c_suiv->command.entier = commande_entier[n - i];
+                    break;
+                case 2:
+                    c_suiv->command.caractere = commande_caractere[n - i];
+                    break;
+                default:
+                    break;
+            }
+            c_suiv = c_suiv->suivant;
+        }
+    }
 }
 
 void afficher(sequence_t *seq) {
