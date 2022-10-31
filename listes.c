@@ -214,6 +214,7 @@ void inversion(sequence_t *seq) {
         int tag[n];
         int commande_entier[n];
         char commande_caractere[n];
+        struct sequence *liste[n];
         c_suiv = seq->tete;
         for (int i = 0; i < n; i++) {
             tag[i] = c_suiv->tag;
@@ -223,6 +224,9 @@ void inversion(sequence_t *seq) {
                     break;
                 case 2:
                     commande_caractere[i] = c_suiv->command.caractere;
+                    break;
+                case 3:
+                    liste[n] = c_suiv->command.liste;
                     break;
                 default:
                     break;
@@ -239,6 +243,9 @@ void inversion(sequence_t *seq) {
                     break;
                 case 2:
                     c_suiv->command.caractere = commande_caractere[n - i];
+                    break;
+                case 3:
+                    c_suiv->command.liste = liste[n - i];
                     break;
                 default:
                     break;
