@@ -226,7 +226,7 @@ void inversion(sequence_t *seq) {
                     commande_caractere[i] = c_suiv->command.caractere;
                     break;
                 case 3:
-                    liste[n] = c_suiv->command.liste;
+                    liste[i] = c_suiv->command.liste;
                     break;
                 default:
                     break;
