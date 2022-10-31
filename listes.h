@@ -50,7 +50,7 @@ struct sequence {
 };
 typedef struct sequence sequence_t;
 
-cellule_t *nouvelleCellule(void);
+cellule_t *nouvelleCellule();
 
 
 void detruireCellule(cellule_t *cel);

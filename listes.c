@@ -20,7 +20,7 @@
 
 bool silent_mode = false;
 
-cellule_t *nouvelleCellule(void) {
+cellule_t *nouvelleCellule() {
     cellule_t *c = malloc(sizeof(cellule_t));
     c->suivant = NULL;
     return c;

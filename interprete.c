@@ -200,9 +200,8 @@ int interprete(sequence_t *seq, bool debug) {
         if (debug)
             stop();
     }
-
     /* Si on sort de la boucle sans arriver sur la cible,
      * c'est raté :-( */
-
+    detruireListe(pile);
     return CIBLERATEE;
 }
