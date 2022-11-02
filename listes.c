@@ -228,7 +228,6 @@ void echangerDeuxDerniersElements(sequence_t *seq) {
 
 
 void clonerDernierElement(sequence_t *seq){
-    afficher(seq);
     cellule_t *c = seq->tete;
     assert(c != NULL);
     cellule_t *tmp = nouvelleCellule();
