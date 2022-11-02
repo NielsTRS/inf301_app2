@@ -147,6 +147,12 @@ int interprete(sequence_t *seq, bool debug) {
                     case 'Z':
                         inversion(pile);
                         break;
+                    case 'X':
+                        echangerDeuxDerniersElements(pile);
+                        break;
+                    case 'C':
+                        clonerDernierElement(pile);
+                        break;
                     case '?': // condition
 
                         pileF = depilerListe(pile);
@@ -187,8 +193,9 @@ int interprete(sequence_t *seq, bool debug) {
                 printf("Erreur: tag inconnu");
             }
         }
+        printf("\nPILE\n");
         afficher(pile);
-
+        printf("\n");
         c = c->suivant;
 
         /* Affichage pour faciliter le debug */

@@ -52,6 +52,8 @@ typedef struct sequence sequence_t;
 
 cellule_t *nouvelleCellule();
 
+sequence_t *nouvelleSequence();
+
 
 void detruireCellule(cellule_t *cel);
 
@@ -74,6 +76,12 @@ void conversion(char *texte, sequence_t *seq);
 cellule_t *ajouter_queue_mod(sequence_t *l, cellule_t *queue, char u);
 
 void ajouter_queue(sequence_t *l, char u);
+
+void echangerDeuxDerniersElements(sequence_t *seq);
+
+void clonerDernierElement(sequence_t *seq);
+
+sequence_t *dupliquerListe(sequence_t *seq);
 
 void inversion(sequence_t *seq);
 

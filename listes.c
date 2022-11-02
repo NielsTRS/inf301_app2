@@ -20,6 +20,12 @@
 
 bool silent_mode = false;
 
+sequence_t *nouvelleSequence() {
+    sequence_t *l = malloc(sizeof(sequence_t));
+    l->tete = NULL;
+    return l;
+}
+
 cellule_t *nouvelleCellule() {
     cellule_t *c = malloc(sizeof(cellule_t));
     c->suivant = NULL;
@@ -201,6 +207,71 @@ void ajouter_queue(sequence_t *l, char u) {
     } else {
         l->tete = new;
     }
+}
+
+void echangerDeuxDerniersElements(sequence_t *seq) {
+    cellule_t *c = seq->tete;
+    cellule_t *tmp = NULL;
+    if (c != NULL) {
+        if (c->suivant != NULL) {
+            tmp = c->suivant;
+            if(tmp->suivant != NULL){
+                c->suivant = tmp->suivant;
+            }else{
+                c->suivant = NULL;
+            }
+            tmp->suivant = c;
+            seq->tete = tmp;
+        }
+    }
+}
+
+
+void clonerDernierElement(sequence_t *seq){
+    afficher(seq);
+    cellule_t *c = seq->tete;
+    assert(c != NULL);
+    cellule_t *tmp = nouvelleCellule();
+    tmp->tag = c->tag;
+    switch (c->tag){
+        case 1:
+            tmp->command.entier = c->command.entier;
+            break;
+        case 2:
+            tmp->command.caractere = c->command.caractere;
+            break;
+        case 3:
+            tmp->command.liste = dupliquerListe(c->command.liste);
+            break;
+        default:
+            printf("ERREUR TAG INCONNU DANS LE CLONAGE");
+            break;
+    }
+    tmp->suivant = c;
+    seq->tete = tmp;
+}
+
+sequence_t *dupliquerListe(sequence_t *seq){
+    sequence_t *retour = nouvelleSequence();
+    cellule_t *c = seq->tete;
+    cellule_t *newCell = NULL;
+    int tag;
+    while(c != NULL){
+        tag = c->tag;
+        switch(tag){
+            case 1:
+                newCell = ajouter_queue_mod(retour, newCell, c->command.entier + '0');
+                break;
+            case 2:
+                newCell = ajouter_queue_mod(retour, newCell, c->command.caractere);
+                break;
+            default:
+                printf("ERREUR TAG INCONNU DANS LA DUPLICATION");
+                break;
+        }
+        c = c->suivant;
+    }
+    return retour;
 }
 
 void inversion(sequence_t *seq) {
