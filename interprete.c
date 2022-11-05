@@ -153,6 +153,9 @@ int interprete(sequence_t *seq, bool debug) {
                     case 'C':
                         clonerDernierElement(pile);
                         break;
+                    case 'I':
+                        depilerEntier(pile);
+                        break;
                     case '?': // condition
 
                         pileF = depilerListe(pile);
