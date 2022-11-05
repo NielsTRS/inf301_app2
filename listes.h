@@ -61,8 +61,6 @@ void detruireListe(sequence_t *l);
 
 int depilerEntier(sequence_t *seq);
 
-char depilerChar(sequence_t *seq);
-
 sequence_t *depilerListe(sequence_t *seq);
 
 void empiler(sequence_t *l, char c);

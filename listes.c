@@ -67,24 +67,6 @@ int depilerEntier(sequence_t *seq) {
     return entier;
 }
 
-char depilerChar(sequence_t *seq) {
-    char caractere = '\0';
-    cellule_t *c;
-    if (seq->tete != NULL) {
-        c = seq->tete;
-        caractere = c->command.caractere;
-        if (c->suivant != NULL) {
-            seq->tete = c->suivant;
-        } else {
-            seq->tete = NULL;
-        }
-
-        detruireCellule(c);
-        return caractere;
-    }
-    return caractere;
-}
-
 sequence_t *depilerListe(sequence_t *seq) {
     sequence_t *retour = NULL;
     cellule_t *c;
@@ -215,9 +197,9 @@ void echangerDeuxDerniersElements(sequence_t *seq) {
     if (c != NULL) {
         if (c->suivant != NULL) {
             tmp = c->suivant;
-            if(tmp->suivant != NULL){
+            if (tmp->suivant != NULL) {
                 c->suivant = tmp->suivant;
-            }else{
+            } else {
                 c->suivant = NULL;
             }
             tmp->suivant = c;
@@ -227,12 +209,12 @@ void echangerDeuxDerniersElements(sequence_t *seq) {
 }
 
 
-void clonerDernierElement(sequence_t *seq){
+void clonerDernierElement(sequence_t *seq) {
     cellule_t *c = seq->tete;
     assert(c != NULL);
     cellule_t *tmp = nouvelleCellule();
     tmp->tag = c->tag;
-    switch (c->tag){
+    switch (c->tag) {
         case 1:
             tmp->command.entier = c->command.entier;
             break;
@@ -250,14 +232,14 @@ void clonerDernierElement(sequence_t *seq){
     seq->tete = tmp;
 }
 
-sequence_t *dupliquerListe(sequence_t *seq){
+sequence_t *dupliquerListe(sequence_t *seq) {
     sequence_t *retour = nouvelleSequence();
     cellule_t *c = seq->tete;
     cellule_t *newCell = NULL;
     int tag;
-    while(c != NULL){
+    while (c != NULL) {
         tag = c->tag;
-        switch(tag){
+        switch (tag) {
             case 1:
                 newCell = ajouter_queue_mod(retour, newCell, c->command.entier + '0');
                 break;
