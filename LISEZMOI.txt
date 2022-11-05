@@ -8,7 +8,7 @@ A lire absolument !
 
 Renseignez ici les noms des membres de votre binôme :
 
-Nom1 - prénom1 : TERENS Niels
+Nom1 - prénom1 : TERESE Niels
 Nom2 - prénom2 : SELME Kelyan
 
 Si vous avez des commentaires, remarques etc. pour le rendu, vous pouvez les 
